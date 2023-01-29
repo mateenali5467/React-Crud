@@ -34,9 +34,8 @@ const CrudApp = () => {
   const [SaveEditId, setSaveEditId] = useState(0);
   const [showEditForm, setShowEditForm] = useState(false);
 
-  //Get Data From Fake APi when component render
-  // We Can use Api using both Async/await and then()  catch() method
-
+  //axios Function use With All Request using Props
+  // axios handle custom hook but this only function because simple crud
   const axiosRequest = async (request) => {
     try {
       const response = await axios(request);
@@ -46,6 +45,7 @@ const CrudApp = () => {
     }
   };
 
+  //Get Data From Fake APi when component render
   const getData = async () => {
     const axiosRequestDetail = {
       method: "get",
@@ -55,18 +55,15 @@ const CrudApp = () => {
     setData(res.data.users);
   };
 
-  //Edit Current USer Details
-  const getId = async (item) => {
+  //Delete Current USer Details
+  const deleteUser = async (item) => {
     const id = item.id;
     setId(id);
-
     const axiosRequestDetail = {
       method: "delete",
       url: "https://dummyjson.com/users/" + id,
     };
-
     const res = await axiosRequest(axiosRequestDetail);
-
     if (res.status === 200) {
       let filterData = data.filter((item) => item.id !== res.data.id);
       setData(filterData);
@@ -137,14 +134,15 @@ const CrudApp = () => {
   const editUserFn = async (dataRes) => {
     setSaveEditId(dataRes.id);
 
-    const res = await axiosRequest({
+    const axiosRequestDetail = {
       method: "put",
       url: "https://dummyjson.com/users/" + dataRes.id,
       data: {
         lastName: getEdit.lastName,
         firstName: getEdit.firstName,
       },
-    });
+    };
+    const res = await axiosRequest(axiosRequestDetail);
 
     if (res.status === 200) {
       data.map((item) => {
@@ -213,7 +211,6 @@ const CrudApp = () => {
       data: userInfo,
     };
     const res = await axiosRequest(axiosRequestDetail);
-    console.log(res);
     if (res.status === 200) {
       setShowForm(false);
       setSweetAlert({
@@ -411,7 +408,7 @@ const CrudApp = () => {
                     ) : (
                       <button
                         className="text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                        onClick={() => getId(item)}
+                        onClick={() => deleteUser(item)}
                       >
                         Delete
                       </button>
